@@ -3,75 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Activities</title>
+    <title>To my Nhe Nhe</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="css/activities.css" />
   </head>
   <body>
-    <div id="activityquestion"><b>What are we doing after?</b></div>
+    <div id="activityquestion"><b>What should we do after? 🎡</b></div>
     <div class="activities-selection">
-      <div class="activity-item">
-        <img src="activities/aquarium.jpeg" alt="aquarium" />
-        <label
-          ><input
-            type="checkbox"
-            name="activities"
-            value="aquarium"
-          />aquarium</label
-        >
-      </div>
-      <div class="activity-item">
-        <img src="activities/arcade.jpeg" alt="arcade" />
-        <label
-          ><input
-            type="checkbox"
-            name="activities"
-            value="arcade"
-          />arcade</label
-        >
-      </div>
-      <div class="activity-item">
-        <img src="activities/cinema.jpeg" alt="cinema" />
-        <label
-          ><input
-            type="checkbox"
-            name="activities"
-            value="cinema"
-          />cinema</label
-        >
-      </div>
-      <div class="activity-item">
-        <img src="activities/keramika.jpeg" alt="ceramics" />
-        <label
-          ><input
-            type="checkbox"
-            name="activities"
-            value="ceramics"
-          />ceramics</label
-        >
-      </div>
-      <div class="activity-item">
-        <img src="activities/kunsthalle.jpeg" alt="kunsthalle" />
-        <label
-          ><input
-            type="checkbox"
-            name="activities"
-            value="kunsthalle"
-          />exhibition</label
-        >
-      </div>
-      <div class="activity-item">
-        <img src="activities/park.jpeg" alt="park.jpeg" />
-        <label
-          ><input
-            type="checkbox"
-            name="activities"
-            value="park.jpeg"
-          />park</label
-        >
-      </div>
+      <label class="activity-item">
+        <input type="checkbox" name="activities" value="Aquarium" />
+        <span class="activity-icon" aria-hidden="true">🐠</span>
+        <span class="activity-label">Aquarium</span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" name="activities" value="Arcade" />
+        <span class="activity-icon" aria-hidden="true">🕹️</span>
+        <span class="activity-label">Arcade</span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" name="activities" value="Cinema" />
+        <span class="activity-icon" aria-hidden="true">🎬</span>
+        <span class="activity-label">Cinema</span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" name="activities" value="Figurine painting" />
+        <span class="activity-icon" aria-hidden="true">🎨</span>
+        <span class="activity-label">Figurine painting</span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" name="activities" value="Exhibition" />
+        <span class="activity-icon" aria-hidden="true">🖼️</span>
+        <span class="activity-label">Exhibition</span>
+      </label>
+      <label class="activity-item">
+        <input type="checkbox" name="activities" value="Park" />
+        <span class="activity-icon" aria-hidden="true">🌳</span>
+        <span class="activity-label">Park</span>
+      </label>
     </div>
-    <button class="button" onclick="location.href='lastpage.html'">
-      Last page
-    </button>
+    <button class="button" id="finaleBtn">To the finale 🎉</button>
+
+    <script src="js/responses.js"></script>
+    <script>
+      document.getElementById("finaleBtn").addEventListener("click", function () {
+        HangoutResponses.updateResponses({
+          activities: HangoutResponses.getCheckedValues("activities"),
+        });
+        location.href = "lastpage.html";
+      });
+    </script>
   </body>
 </html>

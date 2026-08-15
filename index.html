@@ -3,30 +3,137 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Be My Valentine</title>
+    <title>To my Nhe Nhe</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="css/valentine.css" />
   </head>
   <body>
-    <div id="valentineQuestion"><b>Will you be my valentine?</b></div>
-    <button class="answerButton" onclick="location.href='thankyou.html'">
-      Yes
-    </button>
-    <button class="answerButton" id="noButton">I no no wanna o(╥﹏╥)o</button>
-    <br />
+    <div id="valentineQuestion"><b>Wanna hang out with me? 🌸</b></div>
+    <div id="subtitle">To my Nhe Nhe</div>
+    <div id="answerRow">
+      <button
+        class="answerButton"
+        id="yesButton"
+        type="button"
+        onclick="location.href='thankyou.html'"
+      >
+        Yes
+      </button>
+      <button class="answerButton" id="noButton" type="button">
+        No o(╥﹏╥)o
+      </button>
+    </div>
     <img src="cat.gif" alt="cat asking question" class="responsive" />
 
     <script>
-      document
-        .getElementById("noButton")
-        .addEventListener("click", function () {
-          var yesButton = document.querySelector(
-            'button[onclick*="thankyou.html"]'
+      document.addEventListener("DOMContentLoaded", function () {
+        var answerRow = document.getElementById("answerRow");
+        var yesButton = document.getElementById("yesButton");
+        var noButton = document.getElementById("noButton");
+        var catImg = document.querySelector("img.responsive");
+
+        function lockInitialPosition() {
+          // Fixing the buttons pulls them out of normal flow entirely, so
+          // whatever comes after them (the gif) would slide up to fill the
+          // space they used to occupy. Freeze the row's height first so
+          // that space stays reserved.
+          var rowHeight = answerRow.getBoundingClientRect().height;
+          answerRow.style.height = rowHeight + "px";
+
+          // Read both button rects before moving either — otherwise fixing
+          // one before reading the other lets the remaining static button
+          // re-center into the space that was vacated, landing it right
+          // under the button we just fixed.
+          var yesRect = yesButton.getBoundingClientRect();
+          var noRect = noButton.getBoundingClientRect();
+
+          yesButton.style.position = "fixed";
+          yesButton.style.margin = "0";
+          yesButton.style.left = yesRect.left + "px";
+          yesButton.style.top = yesRect.top + "px";
+
+          noButton.style.position = "fixed";
+          noButton.style.margin = "0";
+          noButton.style.left = noRect.left + "px";
+          noButton.style.top = noRect.top + "px";
+        }
+
+        function expandRect(rect, padding) {
+          return {
+            left: rect.left - padding,
+            right: rect.right + padding,
+            top: rect.top - padding,
+            bottom: rect.bottom + padding,
+          };
+        }
+
+        function overlaps(left, top, width, height, rect) {
+          return !(
+            left + width < rect.left ||
+            left > rect.right ||
+            top + height < rect.top ||
+            top > rect.bottom
           );
+        }
+
+        function dodge() {
+          var margin = 16;
+          var padding = 20;
+          var width = noButton.offsetWidth;
+          var height = noButton.offsetHeight;
+          var maxLeft = Math.max(window.innerWidth - width - margin, margin);
+          var maxTop = Math.max(window.innerHeight - height - margin, margin);
+          var yesRect = expandRect(yesButton.getBoundingClientRect(), padding);
+          var imgRect = catImg
+            ? expandRect(catImg.getBoundingClientRect(), padding)
+            : null;
+
+          var left, top, attempts = 0;
+          do {
+            left = margin + Math.random() * (maxLeft - margin);
+            top = margin + Math.random() * (maxTop - margin);
+            attempts++;
+          } while (
+            attempts < 30 &&
+            (overlaps(left, top, width, height, yesRect) ||
+              (imgRect && overlaps(left, top, width, height, imgRect)))
+          );
+
+          noButton.style.left = left + "px";
+          noButton.style.top = top + "px";
+        }
+
+        function growYesButton() {
           var currentFontSize = parseInt(
             window.getComputedStyle(yesButton).fontSize
           );
-          yesButton.style.fontSize = currentFontSize + 10 + "px"; // Increase font size by 5px
-        });
+          yesButton.style.fontSize = currentFontSize + 10 + "px";
+        }
+
+        function dodgeAndGrow() {
+          dodge();
+          growYesButton();
+        }
+
+        function waitForStableLayout(callback) {
+          // Wait for web fonts AND the gif to finish loading so the row's
+          // height and the buttons' rects are measured against the final
+          // layout, not a still-shifting one.
+          var fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+          var pageLoaded = new Promise(function (resolve) {
+            if (document.readyState === "complete") {
+              resolve();
+            } else {
+              window.addEventListener("load", resolve, { once: true });
+            }
+          });
+          Promise.all([fontsReady, pageLoaded]).then(callback);
+        }
+
+        waitForStableLayout(lockInitialPosition);
+        noButton.addEventListener("mouseenter", dodgeAndGrow);
+        noButton.addEventListener("click", dodgeAndGrow);
+      });
     </script>
   </body>
 </html>

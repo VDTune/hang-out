@@ -3,60 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>To my Nhe Nhe</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="css/flower.css" />
   </head>
   <body>
-    <div id="thankyou"><b>Thank you for being my girlfriend</b></div>
-    <div class="flower">
-      <div class="f-wrapper">
-        <div class="flower__line"></div>
-        <div class="f">
-          <div class="flower__leaf flower__leaf--1"></div>
-          <div class="flower__leaf flower__leaf--2"></div>
-          <div class="flower__leaf flower__leaf--3"></div>
-          <div class="flower__leaf flower__leaf--4"></div>
-          <div class="flower__leaf flower__leaf--5"></div>
-          <div class="flower__leaf flower__leaf--6"></div>
-          <div class="flower__leaf flower__leaf--7"></div>
-          <div
-            class="flower__leaf flower__leaf--8 flower__fall-down--yellow"
-          ></div>
-        </div>
-      </div>
+    <div id="thankyou"><b>Thanks for hanging out with me! 💕</b></div>
+    <img
+      src="cat-hug-kiss.gif"
+      alt="cat hug and kiss"
+      class="final-gif"
+    />
 
-      <div class="f-wrapper f-wrapper--2">
-        <div class="flower__line"></div>
-        <div class="f">
-          <div class="flower__leaf flower__leaf--1"></div>
-          <div class="flower__leaf flower__leaf--2"></div>
-          <div class="flower__leaf flower__leaf--3"></div>
-          <div class="flower__leaf flower__leaf--4"></div>
-          <div class="flower__leaf flower__leaf--5"></div>
-          <div class="flower__leaf flower__leaf--6"></div>
-          <div class="flower__leaf flower__leaf--7"></div>
-          <div
-            class="flower__leaf flower__leaf--8 flower__fall-down--pink"
-          ></div>
-        </div>
-      </div>
+    <script src="js/responses.js"></script>
+    <script>
+      var FORMSPREE_ENDPOINT = "https://formspree.io/f/xwlenvgd";
 
-      <div class="f-wrapper f-wrapper--3">
-        <div class="flower__line"></div>
-        <div class="f">
-          <div class="flower__leaf flower__leaf--1"></div>
-          <div class="flower__leaf flower__leaf--2"></div>
-          <div class="flower__leaf flower__leaf--3"></div>
-          <div class="flower__leaf flower__leaf--4"></div>
-          <div class="flower__leaf flower__leaf--5"></div>
-          <div class="flower__leaf flower__leaf--6"></div>
-          <div class="flower__leaf flower__leaf--7"></div>
-          <div
-            class="flower__leaf flower__leaf--8 flower__fall-down--purple"
-          ></div>
-        </div>
-      </div>
-      <div class="flower__glass"></div>
-    </div>
+      document.addEventListener("DOMContentLoaded", function () {
+        HangoutResponses.submitResponses(FORMSPREE_ENDPOINT).catch(function (err) {
+          console.error("Could not send responses:", err);
+        });
+      });
+    </script>
   </body>
 </html>

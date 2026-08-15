@@ -3,19 +3,231 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Date</title>
+    <title>To my Nhe Nhe</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="css/date.css" />
   </head>
   <body>
-    <h1 title="choose a date">Are you free on ...</h1>
-    <form class="form-group">
-      <label>Which day: (select a date)</label>
-      <div>
-        <input type="date" />
-        <button class="button" type="submit" formaction="food.html">
-          Submit
-        </button>
+    <h1 title="pick a date to hang out">When are you free to hang out? 📅</h1>
+
+    <div class="date-picker">
+      <div class="date-picker-inner">
+        <label for="dateDisplay">Pick a date:</label>
+
+        <div class="date-field" id="dateField">
+          <input
+            type="text"
+            id="dateDisplay"
+            class="date-input"
+            placeholder="Select a date"
+            readonly
+          />
+          <span class="date-icon" aria-hidden="true">📅</span>
+        </div>
+
+        <div class="calendar" id="calendar" hidden>
+          <div class="calendar-header">
+            <button
+              type="button"
+              class="calendar-nav"
+              id="prevMonth"
+              aria-label="Previous month"
+            >
+              ‹
+            </button>
+            <div class="calendar-title" id="calendarTitle"></div>
+            <button
+              type="button"
+              class="calendar-nav"
+              id="nextMonth"
+              aria-label="Next month"
+            >
+              ›
+            </button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>Su</span><span>Mo</span><span>Tu</span><span>We</span
+            ><span>Th</span><span>Fr</span><span>Sa</span>
+          </div>
+          <div class="calendar-days" id="calendarDays"></div>
+          <div class="calendar-footer">
+            <button type="button" class="calendar-link" id="clearDate">
+              Clear
+            </button>
+            <button type="button" class="calendar-link" id="todayDate">
+              Today
+            </button>
+          </div>
+        </div>
       </div>
-    </form>
+
+      <button class="button" type="button" id="confirmDateBtn">
+        Confirm
+      </button>
+    </div>
+
+    <script src="js/responses.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var dateField = document.getElementById("dateField");
+        var dateDisplay = document.getElementById("dateDisplay");
+        var calendar = document.getElementById("calendar");
+        var calendarTitle = document.getElementById("calendarTitle");
+        var calendarDays = document.getElementById("calendarDays");
+        var prevMonthBtn = document.getElementById("prevMonth");
+        var nextMonthBtn = document.getElementById("nextMonth");
+        var clearBtn = document.getElementById("clearDate");
+        var todayBtn = document.getElementById("todayDate");
+
+        var monthNames = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December",
+        ];
+        var monthNamesShort = [
+          "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        ];
+
+        var today = new Date();
+        var viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        var selectedDate = null;
+
+        function isSameDate(a, b) {
+          return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate()
+          );
+        }
+
+        function createDayCell(dayNum, isOtherMonth, dateObj) {
+          var cell = document.createElement("button");
+          cell.type = "button";
+          cell.textContent = dayNum;
+          cell.className = "calendar-day" + (isOtherMonth ? " is-muted" : "");
+          if (isSameDate(dateObj, today)) cell.classList.add("is-today");
+          if (selectedDate && isSameDate(dateObj, selectedDate)) {
+            cell.classList.add("is-selected");
+          }
+          cell.addEventListener("click", function (e) {
+            e.stopPropagation();
+            selectedDate = dateObj;
+            if (isOtherMonth) {
+              viewDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
+            }
+            updateDisplay();
+            renderCalendar();
+            closeCalendar();
+          });
+          return cell;
+        }
+
+        function renderCalendar() {
+          var year = viewDate.getFullYear();
+          var month = viewDate.getMonth();
+          calendarTitle.textContent = monthNames[month] + " " + year;
+
+          var startWeekday = new Date(year, month, 1).getDay();
+          var daysInMonth = new Date(year, month + 1, 0).getDate();
+          var daysInPrevMonth = new Date(year, month, 0).getDate();
+
+          calendarDays.innerHTML = "";
+
+          for (var i = startWeekday - 1; i >= 0; i--) {
+            var d = daysInPrevMonth - i;
+            calendarDays.appendChild(
+              createDayCell(d, true, new Date(year, month - 1, d))
+            );
+          }
+          for (var d1 = 1; d1 <= daysInMonth; d1++) {
+            calendarDays.appendChild(
+              createDayCell(d1, false, new Date(year, month, d1))
+            );
+          }
+          var totalCells = startWeekday + daysInMonth;
+          var trailing = (7 - (totalCells % 7)) % 7;
+          for (var d2 = 1; d2 <= trailing; d2++) {
+            calendarDays.appendChild(
+              createDayCell(d2, true, new Date(year, month + 1, d2))
+            );
+          }
+        }
+
+        function updateDisplay() {
+          if (!selectedDate) {
+            dateDisplay.value = "";
+            return;
+          }
+          dateDisplay.value =
+            monthNamesShort[selectedDate.getMonth()] +
+            " " +
+            selectedDate.getDate() +
+            ", " +
+            selectedDate.getFullYear();
+        }
+
+        function openCalendar() {
+          calendar.hidden = false;
+        }
+
+        function closeCalendar() {
+          calendar.hidden = true;
+        }
+
+        dateField.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (calendar.hidden) {
+            renderCalendar();
+            openCalendar();
+          } else {
+            closeCalendar();
+          }
+        });
+
+        calendar.addEventListener("click", function (e) {
+          e.stopPropagation();
+        });
+
+        document.addEventListener("click", function () {
+          closeCalendar();
+        });
+
+        prevMonthBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
+          renderCalendar();
+        });
+
+        nextMonthBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
+          renderCalendar();
+        });
+
+        clearBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          selectedDate = null;
+          updateDisplay();
+          renderCalendar();
+        });
+
+        todayBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+          updateDisplay();
+          renderCalendar();
+        });
+
+        renderCalendar();
+
+        document.getElementById("confirmDateBtn").addEventListener("click", function () {
+          HangoutResponses.updateResponses({
+            date: selectedDate ? dateDisplay.value : "",
+          });
+          location.href = "food.html";
+        });
+      });
+    </script>
   </body>
 </html>
