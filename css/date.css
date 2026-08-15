@@ -132,6 +132,16 @@ h1 {
   color: #ffffff;
 }
 
+.calendar-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.calendar-nav:disabled:hover {
+  background: #ffe3ec;
+  color: #e2557a;
+}
+
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -167,6 +177,16 @@ h1 {
 
 .calendar-day.is-muted {
   color: #ecc9d4;
+}
+
+.calendar-day:disabled,
+.calendar-day.is-disabled {
+  color: #f6e2e8;
+  cursor: not-allowed;
+}
+
+.calendar-day:disabled:hover {
+  background: transparent;
 }
 
 .calendar-day.is-today {

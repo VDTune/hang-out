@@ -89,7 +89,13 @@
         ];
 
         var today = new Date();
-        var viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+        today.setHours(0, 0, 0, 0);
+
+        // Only September onward is selectable.
+        var septThisYear = new Date(today.getFullYear(), 8, 1);
+        var minDate = today <= septThisYear ? septThisYear : today;
+
+        var viewDate = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
         var selectedDate = null;
 
         function isSameDate(a, b) {
@@ -104,21 +110,29 @@
           var cell = document.createElement("button");
           cell.type = "button";
           cell.textContent = dayNum;
-          cell.className = "calendar-day" + (isOtherMonth ? " is-muted" : "");
+          var isDisabled = dateObj < minDate;
+          cell.className =
+            "calendar-day" +
+            (isOtherMonth ? " is-muted" : "") +
+            (isDisabled ? " is-disabled" : "");
           if (isSameDate(dateObj, today)) cell.classList.add("is-today");
           if (selectedDate && isSameDate(dateObj, selectedDate)) {
             cell.classList.add("is-selected");
           }
-          cell.addEventListener("click", function (e) {
-            e.stopPropagation();
-            selectedDate = dateObj;
-            if (isOtherMonth) {
-              viewDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
-            }
-            updateDisplay();
-            renderCalendar();
-            closeCalendar();
-          });
+          if (isDisabled) {
+            cell.disabled = true;
+          } else {
+            cell.addEventListener("click", function (e) {
+              e.stopPropagation();
+              selectedDate = dateObj;
+              if (isOtherMonth) {
+                viewDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
+              }
+              updateDisplay();
+              renderCalendar();
+              closeCalendar();
+            });
+          }
           return cell;
         }
 
@@ -151,6 +165,9 @@
               createDayCell(d2, true, new Date(year, month + 1, d2))
             );
           }
+
+          prevMonthBtn.disabled =
+            year === minDate.getFullYear() && month === minDate.getMonth();
         }
 
         function updateDisplay() {
@@ -211,13 +228,17 @@
           renderCalendar();
         });
 
-        todayBtn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-          viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
-          updateDisplay();
-          renderCalendar();
-        });
+        if (today < minDate) {
+          todayBtn.style.display = "none";
+        } else {
+          todayBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            viewDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            updateDisplay();
+            renderCalendar();
+          });
+        }
 
         renderCalendar();
 
